@@ -1,8 +1,5 @@
 *.swp
 *.bak*
 *.pyc
-aleabot.conf
 aleabot.conf.auth
-log
-pykol
 state_aleabot_*.pkl
