@@ -96,7 +96,7 @@ class ClanLeaveRequest(GenericRequest):
 class ClanState(object):
     def __init__(self):
         self._session = None
-        self._my_clan = Clan(0, '')
+        self._my_clan = Clan(2047004929, '')
         self._my_whitelists = {}
         self._state_valid = False
         self._state_valid_since = 0

@@ -190,14 +190,14 @@ settings = [
             """Response for thanksrequest"""),
 
         ('chatter', 'timetext', 'stringchoice',
-            ["It is %X o'clock!"],
+            ["It is %X. Hooray!"],
             """Response for timerequest"""),
 
         ('chatter', 'wangtext', 'stringchoice',
-            ['%T has been slapped with your wang.'],
+            ['%T has been slapped with my wang.'],
             """Response for wangrequest"""),
         ('chatter', 'wangtext_self', 'stringchoice',
-            ['You have been slapped with your own wang.'],
+            ['You have been slapped with my wang.'],
             """Response for reflexive wangrequest"""),
 
         ('chatter', 'arrowtext', 'stringchoice',
@@ -212,11 +212,11 @@ settings = [
             """Response for uneffectrequest"""),
 
         ('chatter', 'dontwangmetext', 'stringchoice',
-            ['I\'m not letting other people touch you with their wangs anymore.'],
+            ['I\'m not letting other people touch you with my wang anymore.'],
             """Response for dontwangmerequest"""),
 
         ('chatter', 'allowwangtext', 'stringchoice',
-            ['Now allowing other people to touch you with their wangs.'],
+            ['Now allowing other people to touch you with my wang.'],
             """Response for allowwangrequest"""),
 
         ('chatter', 'kmailtext_arrow_notattached', 'stringchoice',
@@ -232,7 +232,7 @@ settings = [
             ['I tried to interpret this message as a donation, but there was nothing attached. Did you forget something? Either way, thank you for the thought!'],
             """Response for kmailed donate request with no items or meat"""),
         ('chatter', 'kmailtext_unknown', 'stringchoice',
-            ['Hi %P! I\'m KimmyBot, a dice-rolling and shenanigans bot. I do not know how to interpret your message. I currently understand two types of messages:\n"arrow" (with a time\'s arrow attached) to get shot with an arrow.\n"donate" (with items or meat attached) for donation\nMy main features (such as dice rolling) are accessible via chat PM. Check my display case for help, or kmail KimmyJ with bugs.'],
+            ['Hi %P! I\'m KimmyBot, a dice-rolling, wanging, and shenanigans bot. I do not know how to interpret your message. I currently understand two types of messages:\n"arrow" (with a time\'s arrow attached) to get shot with an arrow.\n"donate" (with items or meat attached) for donation\nMy main features (such as dice rolling and wanging) are accessible via chat PM. Check my display case for help, or kmail KimmyJ with bugs.'],
             """Response for kmail with unknown command"""),
         ('chatter', 'kmailtext_quote', 'stringchoice',
             ['Here is a copy of your message:'],
@@ -306,7 +306,7 @@ settings = [
             ['That player doesn\'t exist.'],
             """Error message when target player is unknown"""),
         ('chatter', 'error_wang_self', 'stringchoice',
-            ['I do not recommend wasting a wang on little ol\' me!'],
+            ['I don\'t feel like playing with my own wang right now.'],
             """Error message when wang target is kimmybot"""),
         ('chatter', 'error_wang_target_limit', 'stringchoice',
             ['You can\'t put your wang on that player any more today.'],
