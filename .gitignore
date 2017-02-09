@@ -5,3 +5,5 @@ log
 aleabot.conf
 aleabot.conf.auth
 state_aleabot_*.pkl
+*.idea
+.idea/*
