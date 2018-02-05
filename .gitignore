@@ -7,3 +7,4 @@ aleabot.conf.auth
 state_aleabot_*.pkl
 *.idea
 .idea/*
+pykol-old.zip
