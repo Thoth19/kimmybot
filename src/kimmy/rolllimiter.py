@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 #
 
 
-import alea.util
+import kimmy.util
 
 class RollLimitError(Exception):
     def __init__(self, value):
@@ -49,22 +49,22 @@ class RollLimiter(object):
         self._private_perplayer = {}
         self._private_perplayer_burst = {}
         self._clockskew = False
-    def check(self, channel, userId, clanId, currentTime, aleabot_config):
+    def check(self, channel, userId, clanId, currentTime, kimmybot_config):
         # clanId must be 0 if channel is not a clan channel
         t = currentTime
         if channel == '':
             # Private roll
-            private_perplayer_limit = aleabot_config.get('private_perplayer_limit')
+            private_perplayer_limit = kimmybot_config.get('private_perplayer_limit')
             if not self._check(self._private_perplayer, userId, private_perplayer_limit, t):
                 burst = self._private_perplayer_burst.get(userId, 0)
-                if burst >= aleabot_config.get('private_perplayer_burst') - 1:
+                if burst >= kimmybot_config.get('private_perplayer_burst') - 1:
                     raise PrivatePerPlayerRollLimitError('Private per-player roll limit')
         else:
             # Public roll
-            public_perplayer_limit = aleabot_config.get('public_perplayer_limit')
+            public_perplayer_limit = kimmybot_config.get('public_perplayer_limit')
             if not self._check(self._public_perplayer, userId, public_perplayer_limit, t):
                 raise PublicPerPlayerRollLimitError('Public per-player roll limit')
-            public_perchannel_limit = aleabot_config.get('public_perchannel_limit')
+            public_perchannel_limit = kimmybot_config.get('public_perchannel_limit')
             if clanId not in self._public_perchannel:
                 self._public_perchannel[clanId] = {}
             if not self._check(self._public_perchannel[clanId], channel, public_perchannel_limit, t):
@@ -80,7 +80,7 @@ class RollLimiter(object):
         result = self._clockskew
         self._clockskew = False
         return result
-    def update(self, channel, userId, clanId, currentTime, aleabot_config):
+    def update(self, channel, userId, clanId, currentTime, kimmybot_config):
         # clanId must be 0 if channel is not a clan channel
         t = currentTime
         if channel == '':
@@ -88,7 +88,7 @@ class RollLimiter(object):
             oldt = self._private_perplayer.get(userId, None)
             self._private_perplayer[userId] = t
             # (Handle bursts)
-            private_perplayer_limit = aleabot_config.get('private_perplayer_limit')
+            private_perplayer_limit = kimmybot_config.get('private_perplayer_limit')
             if oldt is None or oldt + private_perplayer_limit <= t:
                 self._private_perplayer_burst[userId] = 0
             else:
@@ -105,9 +105,9 @@ class RollLimiter(object):
 if __name__ == '__main__':
     import readline
     import time
-    import alea.config
-    import alea.rng
-    config = alea.config.AleabotConfig(alea.rng.RNG())
+    import kimmy.config
+    import kimmy.rng
+    config = kimmy.config.kimmybotConfig(kimmy.rng.RNG())
     config.load_defaults()
     config.set('private_perplayer_limit', 10)
     config.set('private_perplayer_burst', 5)

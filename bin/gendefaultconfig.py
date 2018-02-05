@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,24 +27,24 @@ sys.path.append(os.path.join(basepath, 'src/'))
 
 # "Actual" imports
 import optparse
-import alea.config
-import alea.rng
+import kimmy.config
+import kimmy.rng
 
 if __name__ == '__main__':
     usage = 'Usage: %prog'
     optionparser = optparse.OptionParser(usage=usage)
     optionparser.add_option('-s', '--stdout', dest='stdout',
             action='store_true', default=False,
-            help='Send output to stdout instead of aleabot.conf.default')
+            help='Send output to stdout instead of kimmybot.conf.default')
 
     (options, args) = optionparser.parse_args()
 
-    config = alea.config.AleabotConfig(alea.rng.RNG())
+    config = kimmy.config.kimmybotConfig(kimmy.rng.RNG())
     config.load_defaults()
     if options.stdout:
         config.write(sys.stdout)
     else:
-        outfile = file(os.path.join(basepath, 'aleabot.conf.default'), 'w')
+        outfile = file(os.path.join(basepath, 'kimmybot.conf.default'), 'w')
         config.write(outfile)
         outfile.close()
 

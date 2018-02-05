@@ -1,5 +1,5 @@
 ##
-## Aleabot configuration file
+## kimmybot configuration file
 ##
 
 
@@ -54,7 +54,7 @@ report_level = 500
 
 # Log file prefix (relative to application directory)
 # Leave empty to disable all logging
-log_file = log/aleabot
+log_file = log/kimmybot
 
 # Log level, see report_level for values
 log_level = 500
@@ -150,7 +150,7 @@ rolltext_diceless_private = /msg %p Computing %E gives %R.
 rolltext_diceless_public = /%C Computing %E for %P gives %R.
 
 # Response for helprequest
-helptext = To roll in private: /msg aleabot roll 1dX. To roll in public: /msg aleabot roll 1dX in games. See my display case for more documentation than you could wish for.
+helptext = To roll in private: /msg kimmybot roll 1dX. To roll in public: /msg kimmybot roll 1dX in games. See my display case for more documentation than you could wish for.
 
 # Response for hellorequest
 hellotext = Good day, %P! Your feeble request is?
@@ -195,7 +195,7 @@ kmailtext_donate_thanks = Hi %P, thank you very much for your donation! It is ve
 kmailtext_donate_empty = I tried to interpret this message as a donation, but there was nothing attached. Did you forget something? Either way, thank you for the thought!
 
 # Response for kmail with unknown command
-kmailtext_unknown = Hi %P! I'm aleabot, a dice rolling bot. I do not know how to interpret your message. I currently understand two types of messages:
+kmailtext_unknown = Hi %P! I'm kimmybot, a dice rolling bot. I do not know how to interpret your message. I currently understand two types of messages:
 	"arrow" (with a time's arrow attached) to get shot with an arrow.
 	"donate" (with items or meat attached) for donation
 	My main features (such as dice rolling) are accessible via chat PM. Check my display case for help.
@@ -204,7 +204,7 @@ kmailtext_unknown = Hi %P! I'm aleabot, a dice rolling bot. I do not know how to
 kmailtext_quote = Here is a copy of your message:
 
 # Like kmailtext_quote, if unable to send back items/meat due to Ronin or Hardcore
-kmailtext_quote_ronin = You sent some items and meat which I tried to return, but you are in Hardcore or Ronin. Contact franz1 (#2272489) if you need them back.
+kmailtext_quote_ronin = You sent some items and meat which I tried to return, but you are in Hardcore or Ronin. Contact KimmyJ (#1783943) if you need them back.
 	Here is a copy of your message:
 
 # Header of roll verification mail
@@ -267,7 +267,7 @@ error_wang_no_wangs = My bag of wangs is empty.
 # Error message when target player is unknown
 error_wang_player_not_found = That player doesn't exist.
 
-# Error message when wang target is aleabot
+# Error message when wang target is kimmybot
 error_wang_self = No, just no.
 
 # Error message when wang_target_limit has been reached
@@ -294,7 +294,7 @@ error_arrow_ronin = Target is in Ronin or Hardcore.
 # Error message when target has already been hit with an arrow
 error_arrow_already_hit = Target has already been hit with an arrow today.
 
-# Error message when arrow target is aleabot
+# Error message when arrow target is kimmybot
 error_arrow_self = I haven't learnt the feat of shooting straight up yet.
 
 # Error message when arrow_sender_limit has been reached
@@ -329,4 +329,4 @@ error_bad_syntax_1 = I don't understand. English is not my native tongue, if wha
 error_bad_syntax_2 = Huh?
 error_bad_syntax_3 = You don't make any sense to me. You never seem to make any sense to me.
 error_bad_syntax_4 = Come again? (That's what she said.)
-error_bad_syntax_5 = Sorry, I have no blasted idea what you could be talking about. Try /msg aleabot help?
+error_bad_syntax_5 = Sorry, I have no blasted idea what you could be talking about. Try /msg kimmybot help?

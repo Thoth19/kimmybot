@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -203,15 +203,15 @@ if __name__ == '__main__':
     basepath = os.path.realpath(os.path.join(os.path.dirname(scriptpath), '../..'))
 
     import readline
-    import alea.config
-    import alea.rng
+    import kimmy.config
+    import kimmy.rng
     from kol.Session import Session
 
-    aleabot_config = alea.config.AleabotConfig(alea.rng.RNG())
-    aleabot_config.load(basepath)
+    kimmybot_config = kimmy.config.kimmybotConfig(kimmy.rng.RNG())
+    kimmybot_config.load(basepath)
 
     session = Session()
-    session.login(aleabot_config.get('username'), aleabot_config.get('password'))
+    session.login(kimmybot_config.get('username'), kimmybot_config.get('password'))
     print 'Login successful'
 
     reload_time = 60

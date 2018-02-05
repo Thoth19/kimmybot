@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@ sys.path.append(os.path.join(basepath, 'src/'))
 import math
 import re
 import optparse
-import alea.expr
-import alea.parser
-import alea.rng
-import alea.util
+import kimmy.expr
+import kimmy.parser
+import kimmy.rng
+import kimmy.util
 
 class AutocorrelationCounter(object):
     def __init__(self, maxlag):
@@ -146,9 +146,9 @@ class Histogram(object):
     def bucketrange(self, bucket):
         assert(bucket >= 0 and bucket < self._k)
         # lower end, inclusive
-        lower = self._minlimit + alea.util.ceildiv(bucket * self._rangesize, self._k)
+        lower = self._minlimit + kimmy.util.ceildiv(bucket * self._rangesize, self._k)
         # upper end, exclusive
-        upper = self._minlimit + alea.util.ceildiv((bucket+1) * self._rangesize, self._k)
+        upper = self._minlimit + kimmy.util.ceildiv((bucket+1) * self._rangesize, self._k)
         return (lower, upper)
     def frequency_absolute(self, bucket):
         assert(bucket >= 0 and bucket < self._k)
@@ -196,7 +196,7 @@ def test_expression(expr, rng, options):
 
     # Roll the dice!
     print 'Rolling ' + str(expr) + ' ' + str(options.samples) + ' times gives...'
-    dicecounter = alea.expr.DiceCounter(0)
+    dicecounter = kimmy.expr.DiceCounter(0)
     for j in range(0, options.samples):
         x = expr.eval(rng, dicecounter, 1)[0]
         ac.add(x)
@@ -240,14 +240,14 @@ if __name__ == '__main__':
 
     bad_usage = False
     try:
-        request = alea.parser.aleabot_parse(' '.join(args))
-        rng = alea.rng.RNG()
+        request = kimmy.parser.kimmybot_parse(' '.join(args))
+        rng = kimmy.rng.RNG()
         test_request(request, rng, options)
-    except alea.parser.AleabotSyntaxError as e:
+    except kimmy.parser.kimmybotSyntaxError as e:
         print('Unable to parse request!')
         print('Error: ' + str(e))
         bad_usage = True
-    except alea.expr.AleabotEvalError as e:
+    except kimmy.expr.kimmybotEvalError as e:
         print('Unable to evaluate expression!')
         print('Error: ' + str(e))
     except BadUsageError as e:

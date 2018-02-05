@@ -3,53 +3,53 @@ Important directories and files
 
 Name                             Purpose
 -------------------------------------------------------------------------------
-./                               Top directory. Typically called 'aleabot'
-                                 or 'aleabot-X.Y.Z' (X.Y.Z = aleabot version)
-./aleabot.conf                   Configuration file
+./                               Top directory. Typically called 'kimmybot'
+                                 or 'kimmybot-X.Y.Z' (X.Y.Z = kimmybot version)
+./kimmybot.conf                   Configuration file
 ./bin/                           Contains executable python scripts
-./bin/aleabot.py                 Main bot
+./bin/kimmybot.py                 Main bot
 ./bin/analysis.py                Simple statistical analysis of the RNG
-./bin/gendefaultconfig.py        Generate aleabot.conf.default
+./bin/gendefaultconfig.py        Generate kimmybot.conf.default
 ./doc/                           Contains documentation
 ./log/                           Default location for log files
 ./pykol/                         pykol (not included in repository)
 ./pykol/src/                     pykol source code
 ./src/                           Contains our own python modules
-./src/alea/                      Python module "alea"
-./src/alea/AleabotFilter.py      Filter for pykol, implements aleabot
-./src/alea/breakfast.py          Daily breakfast
-./src/alea/clan.py               Class for fetching and signing up to a clan
-./src/alea/config.py             Configuration reader and list of settings
-./src/alea/expr.py               Aleatory expression classes and aleabot_eval()
-./src/alea/parser.py             Chat message parser: aleabot_parse()
-./src/alea/rng.py                Random number generator classes
-./src/alea/rolllimiter.py        Time-based dice roll limiter
-./src/alea/util.py               Various utility classes and functions
-./src/alea/__init__.py           Should always be empty
+./src/kimmy/                      Python module "kimmy"
+./src/kimmy/kimmybotFilter.py      Filter for pykol, implements kimmybot
+./src/kimmy/breakfast.py          Daily breakfast
+./src/kimmy/clan.py               Class for fetching and signing up to a clan
+./src/kimmy/config.py             Configuration reader and list of settings
+./src/kimmy/expr.py               kimmytory expression classes and kimmybot_eval()
+./src/kimmy/parser.py             Chat message parser: kimmybot_parse()
+./src/kimmy/rng.py                Random number generator classes
+./src/kimmy/rolllimiter.py        Time-based dice roll limiter
+./src/kimmy/util.py               Various utility classes and functions
+./src/kimmy/__init__.py           Should always be empty
 
 
 
 Portability notes
 =================
 
-Aleabot was developed and has been tested on a GNU/Linux system (Gentoo).
+kimmybot was developed and has been tested on a GNU/Linux system (Gentoo).
 It should be easily portable to other UNIX-like operating systems,
 and usually no source modification will be needed.
 
-Aleabot has not been tested on Windows.
+kimmybot has not been tested on Windows.
 
 
 
 How to add a configuration setting
 ==================================
 
-- Open src/alea/config.py.
+- Open src/kimmy/config.py.
 - Add the new setting to the global variable "settings".
-- Run bin/gendefaultconfig.py and verify that the new aleabot.conf.default
+- Run bin/gendefaultconfig.py and verify that the new kimmybot.conf.default
   looks fine.
-- Modify your local aleabot.conf as needed. Note that every setting MUST be
-  defined in aleabot.conf, even if a default value is given in config.py.
+- Modify your local kimmybot.conf as needed. Note that every setting MUST be
+  defined in kimmybot.conf, even if a default value is given in config.py.
 - Add the code that needs the setting.
-- Commit aleabot.conf.default, src/alea/config.py, and other modified source
+- Commit kimmybot.conf.default, src/kimmy/config.py, and other modified source
   files.
 
