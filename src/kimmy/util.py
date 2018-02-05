@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ def prefix_lines(text, prefix, margin):
 
 
 
-# units supported in aleatory expressions
+# units supported in kimmytory expressions
 units = {'': 1, 'k': 1000, 'm': 1000000, 'b': 1000000000}
 
 def isunit(s):

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 
 import os
-from alea.util import intlog2, ceildiv
+from kimmy.util import intlog2, ceildiv
 
 # Must be /dev/urandom or /dev/random (think hard and know the implications
 # before choosing the latter)

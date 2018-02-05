@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,34 +16,34 @@
 #
 
 
-import alea.rng
-import alea.util
+import kimmy.rng
+import kimmy.util
 
-class AleabotEvalError(Exception):
+class kimmybotEvalError(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class ResultCountExceededError(AleabotEvalError):
+class ResultCountExceededError(kimmybotEvalError):
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class DiceCountExceededError(AleabotEvalError):
+class DiceCountExceededError(kimmybotEvalError):
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class DicelessDisallowedError(AleabotEvalError):
+class DicelessDisallowedError(kimmybotEvalError):
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class D1DisallowedError(AleabotEvalError):
+class D1DisallowedError(kimmybotEvalError):
     def __init__(self, value):
         self.value = value
     def __str__(self):
@@ -58,7 +58,7 @@ class DiceCounter(object):
         if self.count > self.limit and self.limit != 0:
             raise DiceCountExceededError('More than ' + str(self.limit) + ' dice used')
 
-# Operator levels for Aleabot expressions:
+# Operator levels for kimmybot expressions:
 #   0 - addition, subtraction
 #   1 - multiplication, division, remainder
 #   2 - exponentiation
@@ -106,31 +106,31 @@ class BinaryExpr(object):
             return [aval * bval]
         elif self.op == '/':
             if bval == 0:
-                raise AleabotEvalError("doesn't compute: (" + str(aval) + ")/(" + str(bval) + ")")
+                raise kimmybotEvalError("doesn't compute: (" + str(aval) + ")/(" + str(bval) + ")")
             return [aval // bval]  # integer division only
         elif self.op == '%':
             if bval == 0:
-                raise AleabotEvalError("doesn't compute: (" + str(aval) + ")%(" + str(bval) + ")")
+                raise kimmybotEvalError("doesn't compute: (" + str(aval) + ")%(" + str(bval) + ")")
             return [aval % bval]
         elif self.op == '^':
             if bval < 0:
-                raise AleabotEvalError("doesn't compute: (" + str(aval) + ")^(" + str(bval) + ")")
-            if alea.util.intlog2(abs(aval)) * bval > BinaryExpr.exponentiation_max_bits:
-                raise AleabotEvalError("exponentiation limit exceeded: (" + str(aval) + ")^(" + str(bval) + ")")
+                raise kimmybotEvalError("doesn't compute: (" + str(aval) + ")^(" + str(bval) + ")")
+            if kimmy.util.intlog2(abs(aval)) * bval > BinaryExpr.exponentiation_max_bits:
+                raise kimmybotEvalError("exponentiation limit exceeded: (" + str(aval) + ")^(" + str(bval) + ")")
             return [aval ** bval]  # note: returns 1 for aval == bval == 0
         elif self.op == 'D':
             if aval < 0 or bval <= 0:
-                raise AleabotEvalError("doesn't compute: (" + str(aval) + ")D(" + str(bval) + ")")
+                raise kimmybotEvalError("doesn't compute: (" + str(aval) + ")D(" + str(bval) + ")")
             dicecounter.add(aval)
-            return [alea.util.roll(rng, aval, bval)]
+            return [kimmy.util.roll(rng, aval, bval)]
         elif self.op == 'S':
             if self.a.classify_dice() != 0 or self.b.classify_dice() != 0:
-                raise AleabotEvalError("operands of S operator must be diceless")
+                raise kimmybotEvalError("operands of S operator must be diceless")
             if aval < 0 or bval <= 0 or aval > bval:
-                raise AleabotEvalError("doesn't compute: (" + str(aval) + ")S(" + str(bval) + ")")
+                raise kimmybotEvalError("doesn't compute: (" + str(aval) + ")S(" + str(bval) + ")")
             if maxresults < aval:
                 raise ResultCountExceededError('result count exceeded')
-            return alea.util.shuffle(rng, aval, bval) 
+            return kimmy.util.shuffle(rng, aval, bval) 
 
 
 
@@ -140,7 +140,7 @@ class BinaryExpr(object):
         classify_a = self.a.classify_dice()
         classify_b = self.b.classify_dice()
         if self.op == 'D' or self.op == 'S':
-            if classify_a <= 1 and classify_b <= 1 and self.b.eval(alea.rng.RNG_xkcd(), DiceCounter(0), 1) == 1:
+            if classify_a <= 1 and classify_b <= 1 and self.b.eval(kimmy.rng.RNG_xkcd(), DiceCounter(0), 1) == 1:
                 return 1
             else:
                 return 2
@@ -210,19 +210,19 @@ class NumberExpr(object):
         return 0
 
     def format(self, paren_if_level_below):
-        return alea.util.format_with_unit(self.value)
+        return kimmy.util.format_with_unit(self.value)
 
     def __str__(self):
         return self.format(0)
 
-def aleabot_eval(exprlist, public, rng, aleabot_config):
+def kimmybot_eval(exprlist, public, rng, kimmybot_config):
     # Verify d1/diceless limit
     if public:
-        allow_diceless = aleabot_config.get('allow_diceless_public')
-        allow_d1 = aleabot_config.get('allow_d1_public')
+        allow_diceless = kimmybot_config.get('allow_diceless_public')
+        allow_d1 = kimmybot_config.get('allow_d1_public')
     else:
-        allow_diceless = aleabot_config.get('allow_diceless_private')
-        allow_d1 = aleabot_config.get('allow_d1_private')
+        allow_diceless = kimmybot_config.get('allow_diceless_private')
+        allow_d1 = kimmybot_config.get('allow_d1_private')
     if (not allow_diceless) or (not allow_d1):
         for expr in exprlist:
             classify = expr.classify_dice()
@@ -231,11 +231,11 @@ def aleabot_eval(exprlist, public, rng, aleabot_config):
             if not allow_d1 and classify == 1:
                 raise D1DisallowedError('D1 roll not allowed')
     # Get result count limit. If <= 0, set to practically unlimited.
-    result_count_max = aleabot_config.get('result_count_max')
+    result_count_max = kimmybot_config.get('result_count_max')
     if result_count_max <= 0:
         result_count_max = 0xDEADBEEF  # Limited by meat. Wait, what?!
     # Roll (and at the same time verify result count / dice limits)
-    dice_per_expression_max = aleabot_config.get('dice_per_expression_max')
+    dice_per_expression_max = kimmybot_config.get('dice_per_expression_max')
     all_results = []
     for expr in exprlist:
         results = expr.eval(rng,

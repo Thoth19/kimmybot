@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,22 +16,22 @@
 #
 
 
-import alea.expr
-import alea.util
+import kimmy.expr
+import kimmy.util
 import re
 
-class AleabotSyntaxError(Exception):
+class kimmybotSyntaxError(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-def aleabot_parse(line):
+def kimmybot_parse(line):
     # The big ol' parser routine
 
     # Takes a string (something sent to the bot via PM) and returns it
     # in a format that is much simpler to process. Specifically, unless
-    # this function throws an exception (AleabotSyntaxError) it
+    # this function throws an exception (kimmybotSyntaxError) it
     # returns a tuple of one of the following forms:
     #   ('rollrequest', expressionlist, channelname) where
     #     - expressionlist is a list of expression objects
@@ -48,13 +48,13 @@ def aleabot_parse(line):
     #   ('arrowrequest', playername)
     #     - playername is the name of the player (not yet resolved to user id)
     #   ('uneffectrequest', uneffectable)
-    #     - uneffectable is an instance of class alea.util.Uneffectable
+    #     - uneffectable is an instance of class kimmy.util.Uneffectable
     #   ('dontwangmerequest',)
     #   ('allowwangrequest',)
     #   ('nullrequest',)
 
     # First step in parsing is lexing. This inner function takes the line
-    # passed to aleabot_parse() and converts it into a list of tokens.
+    # passed to kimmybot_parse() and converts it into a list of tokens.
     # Each token is represented by a 1-element or 2-element tuple, where
     # the first element is the token name (a string) and the second is
     # an optional parameter.
@@ -126,7 +126,7 @@ def aleabot_parse(line):
                 elif keyword == 's':
                     tokens.append(('dice','S'))
                 else:
-                    raise AleabotSyntaxError('unknown keyword')
+                    raise kimmybotSyntaxError('unknown keyword')
             elif c in digits:
                 # We ignore spaces in numbers (so that '1 2 3' is
                 # interpreted as 123), because KoL chat sometimes adds
@@ -134,8 +134,8 @@ def aleabot_parse(line):
                 while pos < len(line) and (line[pos] in digits or line[pos] == ' '):
                     pos += 1
                 value = int(line[pos1:pos].replace(' ', ''))
-                if pos < len(line) and alea.util.isunit(line[pos]):
-                    value *= alea.util.getunit(line[pos])
+                if pos < len(line) and kimmy.util.isunit(line[pos]):
+                    value *= kimmy.util.getunit(line[pos])
                     pos += 1
                 tokens.append(('number', value))
             elif c == '.' or c == '!' or c == '?':
@@ -173,9 +173,9 @@ def aleabot_parse(line):
                     pos += 1
                     tokens.append(('heart_or_smile',))
                 else:
-                    raise AleabotSyntaxError('broken smile')
+                    raise kimmybotSyntaxError('broken smile')
             else:
-                raise AleabotSyntaxError("can't parse symbol: " + c)
+                raise kimmybotSyntaxError("can't parse symbol: " + c)
             if expect_name:
                 # channel name for rollrequest
                 # player name for wangrequest and arrowrequest
@@ -205,7 +205,7 @@ def aleabot_parse(line):
     # Some helper functions for that purpose follow.
     # Note: 'state' always refers to a state object that contains the list
     # of tokens (state.tokens) and the current token position (state.tokenpos).
-    # The state object is persistent within an aleabot_parse call.
+    # The state object is persistent within an kimmybot_parse call.
     def is_token(state,tok):
         return state.tokens[state.tokenpos][0] == tok
     def get_token_parameter(state):
@@ -239,31 +239,31 @@ def aleabot_parse(line):
                             return ('rollrequest', expressionlist, channel)
                 elif is_token(state, 'end'):
                     return ('rollrequest', expressionlist, '')
-            raise AleabotSyntaxError('unable to parse roll request')
+            raise kimmybotSyntaxError('unable to parse roll request')
         elif is_token(state, 'helpcommand'):
             advance(state)
             if is_token(state, 'end'):
                 return ('helprequest',)
-            raise AleabotSyntaxError('unable to parse help request')
+            raise kimmybotSyntaxError('unable to parse help request')
         elif is_token(state, 'hellocommand'):
             advance(state)
             if is_token(state, 'end'):
                 return ('hellorequest',)
-            raise AleabotSyntaxError('unable to parse hello request')
+            raise kimmybotSyntaxError('unable to parse hello request')
         elif is_token(state, 'thanks'):
             advance(state)
             if is_token(state, 'name'):
                 playername = get_token_parameter(state)
-                if playername == '' or playername.lower() == 'you' or playername.lower() == 'to you' or playername == 'u' or playername.lower() == 'aleabot' or playername.lower() == 'alea' or playername.lower() == 'you aleabot':
+                if playername == '' or playername.lower() == 'you' or playername.lower() == 'to you' or playername == 'u' or playername.lower() == 'kimmybot' or playername.lower() == 'kimmy' or playername.lower() == 'you kimmybot':
                     advance(state)
                     if is_token(state, 'end'):
                         return ('thanksrequest',)
-            raise AleabotSyntaxError('unable to parse thanks request')
+            raise kimmybotSyntaxError('unable to parse thanks request')
         elif is_token(state, 'timecommand'):
             advance(state)
             if is_token(state, 'end'):
                 return ('timerequest',)
-            raise AleabotSyntaxError('unable to parse time request')
+            raise kimmybotSyntaxError('unable to parse time request')
         elif is_token(state, 'wangcommand'):
             advance(state)
             if is_token(state, 'name'):
@@ -271,7 +271,7 @@ def aleabot_parse(line):
                 advance(state)
                 if is_token(state, 'end'):
                     return ('wangrequest', playername)
-            raise AleabotSyntaxError('unable to parse wang request')
+            raise kimmybotSyntaxError('unable to parse wang request')
         elif is_token(state, 'arrowcommand'):
             advance(state)
             if is_token(state, 'name'):
@@ -279,28 +279,28 @@ def aleabot_parse(line):
                 advance(state)
                 if is_token(state, 'end'):
                     return ('arrowrequest', playername)
-            raise AleabotSyntaxError('unable to parse arrow request')
+            raise kimmybotSyntaxError('unable to parse arrow request')
         elif is_token(state, 'uneffectcommand'):
             advance(state)
             if is_token(state, 'name'):
                 effectname = get_token_parameter(state)
                 advance(state)
                 if is_token(state, 'end'):
-                    return ('uneffectrequest', alea.util.Uneffectable(effectname))
-            raise AleabotSyntaxError('unable to parse uneffect request')
+                    return ('uneffectrequest', kimmy.util.Uneffectable(effectname))
+            raise kimmybotSyntaxError('unable to parse uneffect request')
         elif is_token(state, 'dontwangmecommand'):
             advance(state)
             if is_token(state, 'end'):
                 return ('dontwangmerequest',)
-            raise AleabotSyntaxError('unable to parse dontwangme request')
+            raise kimmybotSyntaxError('unable to parse dontwangme request')
         elif is_token(state, 'allowwangcommand'):
             advance(state)
             if is_token(state, 'end'):
                 return ('allowwangrequest',)
-            raise AleabotSyntaxError('unable to parse allowwang request')
+            raise kimmybotSyntaxError('unable to parse allowwang request')
         elif is_token(state, 'end'):
             return ('nullrequest',)
-        raise AleabotSyntaxError('unable to parse request')
+        raise kimmybotSyntaxError('unable to parse request')
     def parse_expressionlist(state):
         exprlist = [parse_expression(state)]
         while is_token(state, 'listseparator'):
@@ -314,7 +314,7 @@ def aleabot_parse(line):
             op = get_token_parameter(state)
             advance(state)
             subexpr_a = parse_product(state)
-            expr = alea.expr.UnaryExpr(subexpr_a, op)
+            expr = kimmy.expr.UnaryExpr(subexpr_a, op)
         else:
             expr = parse_product(state)
         while is_token(state, 'plusminus'):
@@ -322,7 +322,7 @@ def aleabot_parse(line):
             advance(state)
             subexpr_a = expr
             subexpr_b = parse_product(state)
-            expr = alea.expr.BinaryExpr(subexpr_a, subexpr_b, op)
+            expr = kimmy.expr.BinaryExpr(subexpr_a, subexpr_b, op)
         return expr
     def parse_product(state):
         expr = parse_power(state)
@@ -331,7 +331,7 @@ def aleabot_parse(line):
             advance(state)
             subexpr_a = expr
             subexpr_b = parse_power(state)
-            expr = alea.expr.BinaryExpr(subexpr_a, subexpr_b, op)
+            expr = kimmy.expr.BinaryExpr(subexpr_a, subexpr_b, op)
         return expr
     def parse_power(state):
         expr = parse_diceterm(state)
@@ -340,7 +340,7 @@ def aleabot_parse(line):
             advance(state)
             subexpr_a = expr
             subexpr_b = parse_power(state)  # <-- recurse to implement the right binding power operator
-            expr = alea.expr.BinaryExpr(subexpr_a, subexpr_b, op)
+            expr = kimmy.expr.BinaryExpr(subexpr_a, subexpr_b, op)
         return expr
     def parse_diceterm(state):
         if is_token(state, 'dice'):
@@ -348,7 +348,7 @@ def aleabot_parse(line):
             advance(state)
             subexpr_a = parse_simpleexpression(state)
             # Treat as 1dX
-            return alea.expr.BinaryExpr(alea.expr.NumberExpr(1), subexpr_a, op)
+            return kimmy.expr.BinaryExpr(kimmy.expr.NumberExpr(1), subexpr_a, op)
         else:
             expr = parse_simpleexpression(state)
             if is_token(state, 'dice'): # non-binding operator => don't iterate here
@@ -356,22 +356,22 @@ def aleabot_parse(line):
                 advance(state)
                 subexpr_a = expr
                 subexpr_b = parse_simpleexpression(state)
-                expr = alea.expr.BinaryExpr(subexpr_a, subexpr_b, op)
+                expr = kimmy.expr.BinaryExpr(subexpr_a, subexpr_b, op)
             return expr
     def parse_simpleexpression(state):
         if is_token(state, 'number'):
             value = get_token_parameter(state)
             advance(state)
-            return alea.expr.NumberExpr(value)
+            return kimmy.expr.NumberExpr(value)
         elif is_token(state, 'lparen'):
             advance(state)
             expr = parse_expression(state)
             if is_token(state, 'rparen'):
                 advance(state)
                 return expr
-        raise AleabotSyntaxError('unable to parse expression')
-    # Top level aleabot_parse() code
-    state = alea.util.Expando()
+        raise kimmybotSyntaxError('unable to parse expression')
+    # Top level kimmybot_parse() code
+    state = kimmy.util.Expando()
     state.tokens = lexer(line)
     # if the list of tokens start with 'please', remove 'please'
     if len(state.tokens) >= 1 and state.tokens[0][0] == 'please':
@@ -402,13 +402,13 @@ def aleabot_parse(line):
 
 if __name__ == '__main__':
     import readline
-    rng = alea.rng.RNG()
+    rng = kimmy.rng.RNG()
     while True:
         s = raw_input('--> ')
         t = None
         try:
-            t = aleabot_parse(s)
-        except AleabotSyntaxError as err:
+            t = kimmybot_parse(s)
+        except kimmybotSyntaxError as err:
             print('Syntax error: ' + str(err))
             t = None
         print repr(t)
@@ -416,9 +416,9 @@ if __name__ == '__main__':
             for i in range(0, len(t[1])):
                 print 'Expression: ' + str(t[1][i])
                 try:
-                    print 'Eval: ' + str(t[1][i].eval(rng, alea.expr.DiceCounter(0), 10))
+                    print 'Eval: ' + str(t[1][i].eval(rng, kimmy.expr.DiceCounter(0), 10))
                     print 'Classify dice: ' + str(t[1][i].classify_dice())
-                except alea.expr.AleabotEvalError as err:
+                except kimmy.expr.kimmybotEvalError as err:
                     print 'error: ' + str(err)
             print 'Channel: ' + str(t[2])
         if t is not None and t[0] == 'uneffectrequest':

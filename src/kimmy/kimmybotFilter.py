@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 
 """
-This module implements a FilterManager filter to provide aleabot functionality.
+This module implements a FilterManager filter to provide kimmybot functionality.
 """
 
 
@@ -31,15 +31,15 @@ from kol.bot import BotUtils
 from kol.util import Report
 import re
 import time
-import alea.breakfast
-import alea.clan
-import alea.parser
-import alea.rng
-import alea.rolllimiter
-import alea.util
+import kimmy.breakfast
+import kimmy.clan
+import kimmy.parser
+import kimmy.rng
+import kimmy.rolllimiter
+import kimmy.util
 
 
-class GenericAleabotError(Exception):
+class GenerickimmybotError(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
@@ -70,15 +70,15 @@ ITEM_ID_CANDYHEART = 2308  # yellow candy heart
 
 
 # This global variable contains non-persistent bot state
-aleabot = alea.util.Expando()
+kimmybot = kimmy.util.Expando()
 
 def init(rng, config):
-    aleabot.rng = rng
-    aleabot.config = config
-    aleabot.rolllimiter = alea.rolllimiter.RollLimiter()
-    aleabot.clanstate = alea.clan.ClanState()
-    aleabot.kmail_check_timer = 0
-    aleabot.home_clan_timer = -1
+    kimmybot.rng = rng
+    kimmybot.config = config
+    kimmybot.rolllimiter = kimmy.rolllimiter.RollLimiter()
+    kimmybot.clanstate = kimmy.clan.ClanState()
+    kimmybot.kmail_check_timer = 0
+    kimmybot.home_clan_timer = -1
 
 
 def doFilter(eventName, context, **kwargs):
@@ -109,47 +109,47 @@ def botEndCycle(context, **kwargs):
     bot = kwargs['bot']
 
     # Check for new kmails?
-    aleabot.kmail_check_timer += aleabot.config.get('time_to_sleep')
-    if aleabot.kmail_check_timer >= aleabot.config.get('time_to_sleep_kmail'):
+    kimmybot.kmail_check_timer += kimmybot.config.get('time_to_sleep')
+    if kimmybot.kmail_check_timer >= kimmybot.config.get('time_to_sleep_kmail'):
         Report.trace('bot', 'Enabling doWork:kmail')
         bot.params['doWork:kmail'] = True
-        aleabot.kmail_check_timer = 0
+        kimmybot.kmail_check_timer = 0
     else:
         Report.trace('bot', 'Disabling doWork:kmail')
         bot.params.pop('doWork:kmail', None)
 
     # Update clan state in regular intervals (as configured)
     try:
-        aleabot.clanstate.set_session(bot.session)
-        if aleabot.clanstate.update(aleabot.config.get('clan_state_refresh_time')):
+        kimmybot.clanstate.set_session(bot.session)
+        if kimmybot.clanstate.update(kimmybot.config.get('clan_state_refresh_time')):
             Report.info('bot', 'Clan state update successful.')
-            Report.trace('bot', 'I am in clan: ' + repr(aleabot.clanstate.my_clan()))
-            Report.trace('bot', 'I have ' + str(len(aleabot.clanstate.my_whitelists())) + ' whitelists')
+            Report.trace('bot', 'I am in clan: ' + repr(kimmybot.clanstate.my_clan()))
+            Report.trace('bot', 'I have ' + str(len(kimmybot.clanstate.my_whitelists())) + ' whitelists')
             # Set timer to switch back to home clan
-            if aleabot.home_clan_timer < 0:
-                aleabot.home_clan_timer = 0
-    except alea.clan.ClanRequestError as err:
+            if kimmybot.home_clan_timer < 0:
+                kimmybot.home_clan_timer = 0
+    except kimmy.clan.ClanRequestError as err:
         Report.error('bot', 'Unable to update clan state! Error: ' + str(err))
 
     # Switch to home clan after some delay
-    if aleabot.home_clan_timer >= 0:
-        aleabot.home_clan_timer += aleabot.config.get('time_to_sleep')
-        if aleabot.home_clan_timer >= aleabot.config.get('home_clan_delay'):
-            aleabot.home_clan_timer = -1
+    if kimmybot.home_clan_timer >= 0:
+        kimmybot.home_clan_timer += kimmybot.config.get('time_to_sleep')
+        if kimmybot.home_clan_timer >= kimmybot.config.get('home_clan_delay'):
+            kimmybot.home_clan_timer = -1
 
             # Breakfast now if not yet breakfasted today
             if 'breakfast' not in bot.states['rollover']:
-                alea.breakfast.breakfast(bot.session)
+                kimmy.breakfast.breakfast(bot.session)
                 bot.states['rollover']['breakfast'] = True
                 bot.writeState('rollover')
 
             # Switch to home clan now
-            home_clan_id = aleabot.config.get('home_clan_id')
-            if home_clan_id > 0 and aleabot.clanstate.my_clan().id() != home_clan_id:
+            home_clan_id = kimmybot.config.get('home_clan_id')
+            if home_clan_id > 0 and kimmybot.clanstate.my_clan().id() != home_clan_id:
                 Report.info('bot', 'Switching back to home clan.')
                 try:
-                    aleabot.clanstate.switch(alea.clan.Clan(home_clan_id, ''))
-                except alea.clan.ClanRequestError as err:
+                    kimmybot.clanstate.switch(kimmy.clan.Clan(home_clan_id, ''))
+                except kimmy.clan.ClanRequestError as err:
                     Report.error('bot', 'Unable to switch clan! Error: ' + str(err))
 
     return returnCode
@@ -189,47 +189,47 @@ def botProcessKmail(context, **kwargs):
                 return_goodies = False
             except Error.Error as err:
                 if err.code == Error.ITEM_NOT_FOUND:
-                    response = aleabot.config.get('error_arrow_no_arrows')
+                    response = kimmybot.config.get('error_arrow_no_arrows')
                 elif err.code == Error.USER_NOT_FOUND:
-                    response = aleabot.config.get('error_arrow_player_not_found')
+                    response = kimmybot.config.get('error_arrow_player_not_found')
                 elif err.code == Error.USER_IN_HARDCORE_RONIN:
-                    response = aleabot.config.get('error_arrow_ronin')
+                    response = kimmybot.config.get('error_arrow_ronin')
                 elif err.code == Error.ALREADY_COMPLETED:
-                    response = aleabot.config.get('error_arrow_already_hit')
+                    response = kimmybot.config.get('error_arrow_already_hit')
                 else:
-                    response = aleabot.config.get('error_arrow_generic')
+                    response = kimmybot.config.get('error_arrow_generic')
 
         elif len(items) == 0 and meat == 0:
             Report.warning('bot', 'Arrow request without arrow from ' + user_name)
-            response = aleabot.config.get('kmailtext_arrow_notattached')
+            response = kimmybot.config.get('kmailtext_arrow_notattached')
 
         else:
             Report.warning('bot', 'Arrow request with extra items or meat from ' + user_name)
-            response = aleabot.config.get('kmailtext_arrow_extraattached')
+            response = kimmybot.config.get('kmailtext_arrow_extraattached')
 
     elif cmd == 'donate' or cmd == 'donation':
         # Handle donation
         if len(items) == 0 and meat == 0:
             # Empty donation kmail?
             Report.warning('bot', 'Empty donation received from ' + user_name)
-            response = aleabot.config.get('kmailtext_donate_empty')
+            response = kimmybot.config.get('kmailtext_donate_empty')
         else:
             Report.info('bot', 'Donation received from ' + user_name)
-            response = aleabot.config.get('kmailtext_donate_thanks')
+            response = kimmybot.config.get('kmailtext_donate_thanks')
             return_goodies = False
             send_heart = True
 
     else:
         # Handle unknown command
         Report.warning('bot', 'Unknown kmail command: ' + cmd)
-        response = aleabot.config.get('kmailtext_unknown')
+        response = kimmybot.config.get('kmailtext_unknown')
 
     # Send our response
     if response != '' or (return_goodies and (len(items) != 0 or meat != 0)):
         Report.info('bot', 'Responding to kmail')
         response_kmail = {}
         response_kmail['userId'] = message['userId']
-        response_kmail['text'] = format_reply(response + '\n\n' + aleabot.config.get('kmailtext_quote'), user_name=user_name, user_id=user_id, current_time=current_time) + '\n' + quote_kmail(message)
+        response_kmail['text'] = format_reply(response + '\n\n' + kimmybot.config.get('kmailtext_quote'), user_name=user_name, user_id=user_id, current_time=current_time) + '\n' + quote_kmail(message)
         if return_goodies:
             response_kmail['items'] = items
             response_kmail['meat'] = meat
@@ -240,7 +240,7 @@ def botProcessKmail(context, **kwargs):
                 Report.error('bot', 'Tried to send items and meat back, but user is in Hardcore or Ronin!')
                 response_kmail2 = {}
                 response_kmail2['userId'] = message['userId']
-                response_kmail2['text'] = format_reply(response + '\n\n' + aleabot.config.get('kmailtext_quote_ronin'), user_name=user_name, user_id=user_id, curent_time=current_time) + '\n' + quote_kmail(message)
+                response_kmail2['text'] = format_reply(response + '\n\n' + kimmybot.config.get('kmailtext_quote_ronin'), user_name=user_name, user_id=user_id, curent_time=current_time) + '\n' + quote_kmail(message)
                 try:
                     bot.sendKmail(response_kmail2)
                 except Error.Error as err2:
@@ -263,7 +263,7 @@ def botProcessKmail(context, **kwargs):
     return returnCode
 
 def quote_kmail(message):
-    q = alea.util.prefix_lines(message['text'], '> ', False)
+    q = kimmy.util.prefix_lines(message['text'], '> ', False)
     if message['meat'] != 0:
         q += ('\n> Meat: %d' % message['meat'])
     for item in message['items']:
@@ -283,15 +283,15 @@ def botProcessChat(context, **kwargs):
         exprlist = []
         exprresults = []
         channel = ''
-        clan = alea.clan.Clan(0, '')
+        clan = kimmy.clan.Clan(0, '')
         target_name = ''
         target_id = '0'
-        uneffectable = alea.util.Uneffectable('')
+        uneffectable = kimmy.util.Uneffectable('')
         msg = ''
 
         try:
             # Parse the abomination that our chat partner hath wrought
-            request = alea.parser.aleabot_parse(chat['text'])
+            request = kimmy.parser.kimmybot_parse(chat['text'])
 
             if request[0] == 'rollrequest':
                 # Handle a dice rolling request
@@ -303,51 +303,51 @@ def botProcessChat(context, **kwargs):
                 if channel == '':
                     # Private rolling
                     if diceless:
-                        msg = aleabot.config.get('rolltext_diceless_private')
+                        msg = kimmybot.config.get('rolltext_diceless_private')
                     else:
-                        msg = aleabot.config.get('rolltext_private')
+                        msg = kimmybot.config.get('rolltext_private')
                 else:
                     # Public rolling
                     if diceless:
-                        msg = aleabot.config.get('rolltext_diceless_public')
+                        msg = kimmybot.config.get('rolltext_diceless_public')
                     else:
-                        msg = aleabot.config.get('rolltext_public')
+                        msg = kimmybot.config.get('rolltext_public')
 
                 # Check if channel is allowed, and switch clan if needed
                 if channel != '':
-                    if channel in aleabot.config.get('channels').split():
+                    if channel in kimmybot.config.get('channels').split():
                         # Allowed public channel (e.g. /games)
                         pass
-                    elif channel in aleabot.config.get('clanchannels').split():
+                    elif channel in kimmybot.config.get('clanchannels').split():
                         # Allowed clan channel (e.g. /clan, /hobopolis, ...)
-                        aleabot.clanstate.set_session(bot.session)
-                        clan = aleabot.clanstate.player_clan(user_id)
+                        kimmybot.clanstate.set_session(bot.session)
+                        clan = kimmybot.clanstate.player_clan(user_id)
                         Report.info('bot', '%s asked me to roll in clan %s' % (user_name, clan.name()))
                         if clan.id() == 0:
                             Report.warning('bot', 'A player who is not in a clan asked me to roll in ' + channel)
                             raise ClanlessPlayerError('clanless player')
-                        elif not aleabot.clanstate.have_whitelist(clan):
+                        elif not kimmybot.clanstate.have_whitelist(clan):
                             Report.warning('bot', 'I do not have a whitelist in clan %s' % clan.name())
                             raise NeedWhitelistError('need whitelist')
                         else:
                             Report.info('bot', 'I have a whitelist in clan %s' % clan.name())
-                            aleabot.clanstate.switch(clan)
+                            kimmybot.clanstate.switch(clan)
                             # Set timer to switch back to home clan
-                            aleabot.home_clan_timer = 0
+                            kimmybot.home_clan_timer = 0
                     else:
                         raise ChannelDisallowedError(channel)
 
                 # Apply time-based limits
-                aleabot.rolllimiter.check(channel, user_id, clan.id(),
-                        current_time, aleabot.config)
+                kimmybot.rolllimiter.check(channel, user_id, clan.id(),
+                        current_time, kimmybot.config)
 
                 # Evaluate dice expressions
-                exprresults = alea.expr.aleabot_eval(exprlist,
-                        channel != '', aleabot.rng, aleabot.config)
+                exprresults = kimmy.expr.kimmybot_eval(exprlist,
+                        channel != '', kimmybot.rng, kimmybot.config)
 
                 # Update time-based roll limiter
-                aleabot.rolllimiter.update(channel, user_id, clan.id(),
-                        current_time, aleabot.config)
+                kimmybot.rolllimiter.update(channel, user_id, clan.id(),
+                        current_time, kimmybot.config)
 
                 # Record roll and result in roll verification list
                 state = bot.states['global']
@@ -360,7 +360,7 @@ def botProcessChat(context, **kwargs):
                     [str(x) for x in exprresults],
                     str(channel),
                     str(clan.name())))
-                rollverify_count = aleabot.config.get('rollverify_count')
+                rollverify_count = kimmybot.config.get('rollverify_count')
                 state[rollverify_key] = state[rollverify_key][0:rollverify_count]
                 bot.writeState('global')
 
@@ -371,11 +371,11 @@ def botProcessChat(context, **kwargs):
                             user_name, user_id, request[1])
 
                     # Get config settings
-                    rollverify_count = aleabot.config.get('rollverify_count')
-                    rollverify_header = aleabot.config.get('rollverify_header')
-                    rollverify_entry_private = aleabot.config.get('rollverify_entry_private')
-                    rollverify_entry_public = aleabot.config.get('rollverify_entry_public')
-                    rollverify_entry_clan = aleabot.config.get('rollverify_entry_clan')
+                    rollverify_count = kimmybot.config.get('rollverify_count')
+                    rollverify_header = kimmybot.config.get('rollverify_header')
+                    rollverify_entry_private = kimmybot.config.get('rollverify_entry_private')
+                    rollverify_entry_public = kimmybot.config.get('rollverify_entry_public')
+                    rollverify_entry_clan = kimmybot.config.get('rollverify_entry_clan')
                     
                     # Get saved list of rolls
                     state = bot.states['global']
@@ -417,26 +417,26 @@ def botProcessChat(context, **kwargs):
 
                 except Error.Error as err:
                     if err.code == Error.USER_NOT_FOUND:
-                        msg = aleabot.config.get('error_rollverify_player_not_found')
+                        msg = kimmybot.config.get('error_rollverify_player_not_found')
                     else:
-                        msg = aleabot.config.get('error_generic')
+                        msg = kimmybot.config.get('error_generic')
 
 
             elif request[0] == 'helprequest':
                 # Handle a help request
-                msg = aleabot.config.get('helptext')
+                msg = kimmybot.config.get('helptext')
 
             elif request[0] == 'hellorequest':
                 # Handle a hello request
-                msg = aleabot.config.get('hellotext')
+                msg = kimmybot.config.get('hellotext')
 
             elif request[0] == 'thanksrequest':
                 # Handle a thanks request
-                msg = aleabot.config.get('thankstext')
+                msg = kimmybot.config.get('thankstext')
 
             elif request[0] == 'timerequest':
                 # Handle a time request
-                msg = aleabot.config.get('timetext')
+                msg = kimmybot.config.get('timetext')
 
             elif request[0] == 'wangrequest':
                 # Handle a wang request
@@ -452,13 +452,13 @@ def botProcessChat(context, **kwargs):
                     wang_target_count_key = 'wang_target_count_' + target_id
                     wang_target_count = state.get(wang_target_count_key, 0)
                     if target_id == str(bot.session.userId):
-                        msg = aleabot.config.get('error_wang_self')
-                    elif wang_sender_count >= aleabot.config.get('wang_sender_limit'):
-                        msg = aleabot.config.get('error_wang_sender_limit')
-                    elif wang_target_count >= aleabot.config.get('wang_target_limit'):
-                        msg = aleabot.config.get('error_wang_target_limit')
+                        msg = kimmybot.config.get('error_wang_self')
+                    elif wang_sender_count >= kimmybot.config.get('wang_sender_limit'):
+                        msg = kimmybot.config.get('error_wang_sender_limit')
+                    elif wang_target_count >= kimmybot.config.get('wang_target_limit'):
+                        msg = kimmybot.config.get('error_wang_target_limit')
                     elif target_id != user_id and ('dontwangme_' + target_id) in bot.states['global']:
-                        msg = aleabot.config.get('error_wang_notwanted')
+                        msg = kimmybot.config.get('error_wang_notwanted')
                     else:
 
                         # Limits not reached yet. Slap!
@@ -466,9 +466,9 @@ def botProcessChat(context, **kwargs):
                         wangreq = CursePlayerRequest(bot.session, target_id, ITEM_ID_WANG)
                         wangreq.doRequest()
                         if target_id == user_id:
-                            msg = aleabot.config.get('wangtext_self')
+                            msg = kimmybot.config.get('wangtext_self')
                         else:
-                            msg = aleabot.config.get('wangtext')
+                            msg = kimmybot.config.get('wangtext')
 
                         # Increase limit counters
                         state[wang_sender_count_key] = wang_sender_count + 1
@@ -477,11 +477,11 @@ def botProcessChat(context, **kwargs):
 
                 except Error.Error as err:
                     if err.code == Error.ITEM_NOT_FOUND:
-                        msg = aleabot.config.get('error_wang_no_wangs')
+                        msg = kimmybot.config.get('error_wang_no_wangs')
                     elif err.code == Error.USER_NOT_FOUND:
-                        msg = aleabot.config.get('error_wang_player_not_found')
+                        msg = kimmybot.config.get('error_wang_player_not_found')
                     else:
-                        msg = aleabot.config.get('error_wang_generic')
+                        msg = kimmybot.config.get('error_wang_generic')
 
             elif request[0] == 'arrowrequest':
                 # Handle an arrow request
@@ -495,9 +495,9 @@ def botProcessChat(context, **kwargs):
                     arrow_sender_count_key = 'arrow_sender_count_' + user_id
                     arrow_sender_count = state.get(arrow_sender_count_key, 0)
                     if target_id == str(bot.session.userId):
-                        msg = aleabot.config.get('error_arrow_self')
-                    elif arrow_sender_count >= aleabot.config.get('arrow_sender_limit'):
-                        msg = aleabot.config.get('error_arrow_sender_limit')
+                        msg = kimmybot.config.get('error_arrow_self')
+                    elif arrow_sender_count >= kimmybot.config.get('arrow_sender_limit'):
+                        msg = kimmybot.config.get('error_arrow_sender_limit')
                     else:
 
                         # Limits not reached yet. Fire!
@@ -505,9 +505,9 @@ def botProcessChat(context, **kwargs):
                         arrowreq = CursePlayerRequest(bot.session, target_id, ITEM_ID_ARROW)
                         arrowreq.doRequest()
                         if target_id == user_id:
-                            msg = aleabot.config.get('arrowtext_self')
+                            msg = kimmybot.config.get('arrowtext_self')
                         else:
-                            msg = aleabot.config.get('arrowtext')
+                            msg = kimmybot.config.get('arrowtext')
 
                         # Increase limit counters
                         state[arrow_sender_count_key] = arrow_sender_count + 1
@@ -515,25 +515,25 @@ def botProcessChat(context, **kwargs):
 
                 except Error.Error as err:
                     if err.code == Error.ITEM_NOT_FOUND:
-                        msg = aleabot.config.get('error_arrow_no_arrows')
+                        msg = kimmybot.config.get('error_arrow_no_arrows')
                     elif err.code == Error.USER_NOT_FOUND:
-                        msg = aleabot.config.get('error_arrow_player_not_found')
+                        msg = kimmybot.config.get('error_arrow_player_not_found')
                     elif err.code == Error.USER_IN_HARDCORE_RONIN:
-                        msg = aleabot.config.get('error_arrow_ronin')
+                        msg = kimmybot.config.get('error_arrow_ronin')
                     elif err.code == Error.ALREADY_COMPLETED:
-                        msg = aleabot.config.get('error_arrow_already_hit')
+                        msg = kimmybot.config.get('error_arrow_already_hit')
                     else:
-                        msg = aleabot.config.get('error_arrow_generic')
+                        msg = kimmybot.config.get('error_arrow_generic')
 
             elif request[0] == 'uneffectrequest':
                 # Handle an uneffect request
                 uneffectable = request[1]
                 if uneffectable.inputname() == '':
-                    msg = aleabot.config.get('error_uneffect_no_effect_given')
+                    msg = kimmybot.config.get('error_uneffect_no_effect_given')
                 elif uneffectable.count() == 0:
-                    msg = aleabot.config.get('error_uneffect_no_match')
+                    msg = kimmybot.config.get('error_uneffect_no_match')
                 elif uneffectable.count() >= 2:
-                    msg = aleabot.config.get('error_uneffect_too_many_matches')
+                    msg = kimmybot.config.get('error_uneffect_too_many_matches')
                 else:
                     # Exactly one effect matched
                     effect_id = uneffectable.effect_ids()[0]
@@ -541,57 +541,57 @@ def botProcessChat(context, **kwargs):
                     uneffectreq = UneffectRequest(bot.session, effect_id)
                     try:
                         uneffectreq.doRequest()
-                        msg = aleabot.config.get('uneffecttext')
+                        msg = kimmybot.config.get('uneffecttext')
                     except Error.Error as err:
                         if err.code == Error.EFFECT_NOT_FOUND:
-                            msg = aleabot.config.get('error_uneffect_not_cursed')
+                            msg = kimmybot.config.get('error_uneffect_not_cursed')
                         elif err.code == Error.ITEM_NOT_FOUND:
-                            msg = aleabot.config.get('error_uneffect_no_sgeea')
+                            msg = kimmybot.config.get('error_uneffect_no_sgeea')
                         else:
-                            msg = aleabot.config.get('error_uneffect_generic')
+                            msg = kimmybot.config.get('error_uneffect_generic')
 
             elif request[0] == 'dontwangmerequest':
                 # Handle a dontwangme request
                 key = 'dontwangme_' + user_id
                 bot.states['global'][key] = True
                 bot.writeState('global')
-                msg = aleabot.config.get('dontwangmetext')
+                msg = kimmybot.config.get('dontwangmetext')
 
             elif request[0] == 'allowwangrequest':
                 # Handle an allowwang request
                 key = 'dontwangme_' + user_id
                 bot.states['global'].pop(key, None)
                 bot.writeState('global')
-                msg = aleabot.config.get('allowwangtext')
+                msg = kimmybot.config.get('allowwangtext')
 
-        except GenericAleabotError:
-            msg = aleabot.config.get('error_generic')
+        except GenerickimmybotError:
+            msg = kimmybot.config.get('error_generic')
         except ChannelDisallowedError:
-            msg = aleabot.config.get('error_channel_disallowed')
+            msg = kimmybot.config.get('error_channel_disallowed')
         except ClanlessPlayerError:
-            msg = aleabot.config.get('error_clanless_player')
+            msg = kimmybot.config.get('error_clanless_player')
         except NeedWhitelistError:
-            msg = aleabot.config.get('error_need_whitelist')
-        except alea.clan.ClanRequestError:
-            msg = aleabot.config.get('error_clan_request')
-        except alea.rolllimiter.PrivatePerPlayerRollLimitError:
-            msg = aleabot.config.get('error_private_perplayer_limit')
-        except alea.rolllimiter.PublicPerPlayerRollLimitError:
-            msg = aleabot.config.get('error_public_perplayer_limit')
-        except alea.rolllimiter.PublicPerChannelRollLimitError:
-            msg = aleabot.config.get('error_public_perchannel_limit')
-        except alea.expr.ResultCountExceededError:
-            msg = aleabot.config.get('error_too_many_results')
-        except alea.expr.DiceCountExceededError:
-            msg = aleabot.config.get('error_expression_too_many_dice')
-        except alea.expr.DicelessDisallowedError:
-            msg = aleabot.config.get('error_diceless')
-        except alea.expr.D1DisallowedError:
-            msg = aleabot.config.get('error_d1')
-        except alea.expr.AleabotEvalError:
-            msg = aleabot.config.get('error_expression_eval')
-        except alea.parser.AleabotSyntaxError:
-            msg = aleabot.config.get('error_bad_syntax')
+            msg = kimmybot.config.get('error_need_whitelist')
+        except kimmy.clan.ClanRequestError:
+            msg = kimmybot.config.get('error_clan_request')
+        except kimmy.rolllimiter.PrivatePerPlayerRollLimitError:
+            msg = kimmybot.config.get('error_private_perplayer_limit')
+        except kimmy.rolllimiter.PublicPerPlayerRollLimitError:
+            msg = kimmybot.config.get('error_public_perplayer_limit')
+        except kimmy.rolllimiter.PublicPerChannelRollLimitError:
+            msg = kimmybot.config.get('error_public_perchannel_limit')
+        except kimmy.expr.ResultCountExceededError:
+            msg = kimmybot.config.get('error_too_many_results')
+        except kimmy.expr.DiceCountExceededError:
+            msg = kimmybot.config.get('error_expression_too_many_dice')
+        except kimmy.expr.DicelessDisallowedError:
+            msg = kimmybot.config.get('error_diceless')
+        except kimmy.expr.D1DisallowedError:
+            msg = kimmybot.config.get('error_d1')
+        except kimmy.expr.kimmybotEvalError:
+            msg = kimmybot.config.get('error_expression_eval')
+        except kimmy.parser.kimmybotSyntaxError:
+            msg = kimmybot.config.get('error_bad_syntax')
 
         # If not explicitly chatting to a public channel or a private
         # conversation, make sure we /msg the user who is talking to us
@@ -619,7 +619,7 @@ def botProcessChat(context, **kwargs):
             # Handle chat errors
             if 'You cannot access that channel' in response_text:
                 Report.warning('bot', 'Received error while chatting: ' + response_text)
-                msg = aleabot.config.get('error_channel_inaccessible')
+                msg = kimmybot.config.get('error_channel_inaccessible')
                 msg = '/msg ' + user_id + ' ' + msg
                 bot.sendChatMessage(msg)
 
@@ -630,13 +630,13 @@ def botProcessChat(context, **kwargs):
 
         # Make sure to check for new kmails next cycle
         # (see botEndCycle handler)
-        aleabot.kmail_check_timer = aleabot.config.get('time_to_sleep_kmail')
+        kimmybot.kmail_check_timer = kimmybot.config.get('time_to_sleep_kmail')
 
     elif chat['type'] in ['unknown']:
         # Handle some chat messages of type 'unknown'
         # Such as: whitelist changes, clan acceptance / rejection
-        aleabot.clanstate.set_session(bot.session)
-        if aleabot.clanstate.read_unknown_chat_message(chat['text']):
+        kimmybot.clanstate.set_session(bot.session)
+        if kimmybot.clanstate.read_unknown_chat_message(chat['text']):
             Report.info('bot', 'Clan state is no longer valid, need to reload.')
 
     return returnCode

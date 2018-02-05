@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import os
 import re
 import ConfigParser
-import alea.util
+import kimmy.util
 
 #
 # List of config file sections.
@@ -115,7 +115,7 @@ settings = [
             600: Show trace messages in addition to the above
             700: Show debug messages in addition to the above"""),
 
-        ('bot', 'log_file', 'string', 'log/aleabot',
+        ('bot', 'log_file', 'string', 'log/kimmybot',
             """Log file prefix (relative to application directory)
             Leave empty to disable all logging"""),
         ('bot', 'log_level', 'int', 500,
@@ -377,13 +377,13 @@ settings = [
 
 ]
 
-class AleabotConfigError(Exception):
+class kimmybotConfigError(Exception):
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class AleabotConfig(object):
+class kimmybotConfig(object):
     def __init__(self, rng):
         self._values = {}
         self._rng = rng
@@ -402,7 +402,7 @@ class AleabotConfig(object):
     def load(self, basepath):
         newvalues = {}
         try:
-            configpath = os.path.join(basepath, 'aleabot.conf')
+            configpath = os.path.join(basepath, 'kimmybot.conf')
             config = ConfigParser.RawConfigParser()
             config.read(configpath)
             for settingsection, setting, settingtype, default, doc in settings:
@@ -429,12 +429,12 @@ class AleabotConfig(object):
                         # Raise a NoOptionError
                         config.get(settingsection, setting)
                 else:
-                    raise ValueError('AleabotConfig.load(): bad settingtype ' + settingtype)
+                    raise ValueError('kimmybotConfig.load(): bad settingtype ' + settingtype)
                 newvalues[setting] = value
         except ConfigParser.Error as err:
-            raise AleabotConfigError(str(err))
+            raise kimmybotConfigError(str(err))
         except ValueError as err:
-            raise AleabotConfigError(str(err))
+            raise kimmybotConfigError(str(err))
         for setting, value in newvalues.iteritems():
             self._values[setting] = value
 
@@ -454,18 +454,18 @@ class AleabotConfig(object):
     def write(self, outfile):
         outfile.write(
             '##\n' +
-            '## Aleabot configuration file\n' +
+            '## kimmybot configuration file\n' +
             '##\n')
         for section, sectiondoc in sections:
             outfile.write(
                     '\n\n' +
-                    alea.util.prefix_lines(sectiondoc, '## ', True) +
+                    kimmy.util.prefix_lines(sectiondoc, '## ', True) +
                     '[' + section + ']\n')
 
             for settingsection, setting, settingtype, default, doc in settings:
                 if settingsection != section:
                     continue
-                outfile.write('\n' + alea.util.prefix_lines(doc, '# ', False))
+                outfile.write('\n' + kimmy.util.prefix_lines(doc, '# ', False))
                 value = self._values.get(setting) # returns None if not set
                 if value is None or (type(value) == list and len(value) == 0):
                     outfile.write('# THIS SETTING MUST BE DEFINED\n')
@@ -490,5 +490,5 @@ class AleabotConfig(object):
         outfile.write(setting + ' = ' + str(value).replace('\n', '\n\t') + '\n')
 
     def __repr__(self):
-        return 'AleabotConfig(%s)' % repr(self._values)
+        return 'kimmybotConfig(%s)' % repr(self._values)
 

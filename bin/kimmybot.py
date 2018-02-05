@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (C) 2012-2013 Aleabot
+# Copyright (C) 2012-2013 kimmybot
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@ sys.path.append(os.path.join(basepath, 'src/'))
 sys.path.append(os.path.join(basepath, 'pykol/src/'))
 
 # "Actual" imports
-import alea.AleabotFilter
-import alea.config
-import alea.rng
+import kimmy.kimmybotFilter
+import kimmy.config
+import kimmy.rng
 from kol.bot.Bot import Bot
 from kol.bot import BotManager
 from kol.manager import FilterManager
@@ -37,13 +37,13 @@ from kol.util import Report
 
 if __name__ == '__main__':
     # Create a random number generator
-    rng = alea.rng.RNG()
+    rng = kimmy.rng.RNG()
 
     # Change to basepath (makes sure state files are saved in basepath)
     os.chdir(basepath)
 
     # Load the config file
-    config = alea.config.AleabotConfig(rng)
+    config = kimmy.config.kimmybotConfig(rng)
     config.load(basepath)
 
     # Set up console and file logging
@@ -57,11 +57,11 @@ if __name__ == '__main__':
                 config.get('log_level'))
 
     # Create and register our custom bot filter
-    alea.AleabotFilter.init(rng, config)
-    FilterManager.registerFilterForEvent(alea.AleabotFilter, "botProcessChat")
-    FilterManager.registerFilterForEvent(alea.AleabotFilter, "botProcessKmail")
-    FilterManager.registerFilterForEvent(alea.AleabotFilter, "botEndCycle")
-    FilterManager.registerFilterForEvent(alea.AleabotFilter, "botPreLogin")
+    kimmy.kimmybotFilter.init(rng, config)
+    FilterManager.registerFilterForEvent(kimmy.kimmybotFilter, "botProcessChat")
+    FilterManager.registerFilterForEvent(kimmy.kimmybotFilter, "botProcessKmail")
+    FilterManager.registerFilterForEvent(kimmy.kimmybotFilter, "botEndCycle")
+    FilterManager.registerFilterForEvent(kimmy.kimmybotFilter, "botPreLogin")
 
     # Start the bot manager
     BotManager.init()
