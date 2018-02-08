@@ -4,8 +4,7 @@ Features
 Kimmybot is a Kingdom of Loathing bot based on the kimmybot core. Its main features at this time are rolling dice,
 handing out wangs and shooting arrows.
 
-kimmybot was written by KimmyJ (#1783943) and is running on kimmybot (#2379422).
-Kimmybot was put together by KimmyJ (#1783943) and is running on kimmybot (#2848651)
+Kimmybot was written by KimmyJ (#1783943) and is running on kimmybot (#2848651). It is based on franz1 (#2272489)'s Aleabot (#2379422) https://github.com/aleabot/aleabot.
 
 If you want to make your own bot I suggest cloning from the kimmybot repo. There are a few code changes which must be made due to significant game changes, which include: 
 
